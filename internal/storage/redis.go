@@ -12,14 +12,14 @@ type RedisStorage struct {
 	expiration time.Duration
 }
 
-func NewRedisStorage(addr string, expiration time.Duration) *RedisStorage {
+func NewRedisStorage(addr string, expiration time.Duration) Storage {
 	client := redis.NewClient(&redis.Options{
 		Addr: addr,
 	})
 	return &RedisStorage{client: client, expiration: expiration}
 }
 
-func (redis *RedisStorage) Set(ctx context.Context, key string, value interface{}) error {
+func (redis *RedisStorage) Set(ctx context.Context, key string, value string) error {
 	//TODO:check what that string may or may not return
 	_, err := redis.client.Set(ctx, key, value, redis.expiration).Result()
 

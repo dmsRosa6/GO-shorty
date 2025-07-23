@@ -3,9 +3,11 @@ package storage
 import (
 	"container/list"
 	"context"
-	"fmt"
+	"errors"
 	"sync"
 )
+
+var ErrKeyNotFound = errors.New("key not found")
 
 type MapEntry struct {
 	key   string
@@ -19,7 +21,7 @@ type InMemoryStorage struct {
 	maxSize int
 }
 
-func NewInMemoryStorage(size int) *InMemoryStorage {
+func NewInMemoryStorage(size int) Storage {
 	return &InMemoryStorage{
 		store:   make(map[string]*list.Element, size),
 		maxSize: size,
@@ -56,7 +58,7 @@ func (mem *InMemoryStorage) Get(ctx context.Context, key string) (string, error)
 
 	elem, ok := mem.store[key]
 	if !ok {
-		return "", fmt.Errorf("key not found")
+		return "", ErrKeyNotFound
 	}
 
 	mem.lru.MoveToFront(elem)
