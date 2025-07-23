@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	redismock "github.com/go-redis/redismock/v9"
-	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/require"
 )
 
@@ -63,4 +62,3 @@ func TestRedisGet_InternalError(t *testing.T) {
 
 	require.EqualError(t, err, "redis error")
 }
-
