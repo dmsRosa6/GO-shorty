@@ -8,7 +8,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-var failedConnection = errors.New("failed to connect to Redis")
+var errFailedConnection = errors.New("failed to connect to Redis")
 
 type RedisStorage struct {
 	client     *redis.Client
@@ -25,7 +25,7 @@ func NewRedisStorage(addr string, expiration time.Duration) (Storage, error) {
 	defer cancel()
 
 	if err := client.Ping(ctx).Err(); err != nil {
-		return nil, failedConnection
+		return nil, errFailedConnection
 	}
 
 	return &RedisStorage{client: client, expiration: expiration}, nil
