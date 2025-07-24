@@ -1,6 +1,6 @@
 # go-shorty
 
-A simple URL shortener service written in Go to understand how go handles http requests.
+A simple URL shortener service written in Go to understand how go handles simple http requests. It has a low probability of redirecting the user to "In Da Club" by 50 Cent.
 
 ## Features
 

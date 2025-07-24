@@ -3,8 +3,10 @@ package handler
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"net/http"
 
+	"github.com/dmsRosa6/go-shorty/internal/config"
 	"github.com/dmsRosa6/go-shorty/internal/service"
 	"github.com/go-chi/chi/v5"
 )
@@ -40,6 +42,11 @@ func (s *Server) shortenHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) redirectHandler(w http.ResponseWriter, r *http.Request) {
+	n := rand.Int31n(100)
+	if n >= 100-config.InDaClubProbability {
+		http.Redirect(w, r, config.InDaClub, http.StatusFound)
+	}
+
 	code := chi.URLParam(r, "code")
 	ctx := context.Background()
 

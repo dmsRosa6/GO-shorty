@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"log"
 	"time"
 
 	redis "github.com/redis/go-redis/v9"
@@ -13,21 +14,29 @@ type CompositeStorage struct {
 }
 
 func NewCompositeStorage(size int, addr string, expiration time.Duration) *CompositeStorage {
+	redis, err := NewRedisStorage(addr, expiration)
+
+	if err != nil {
+		log.Printf("warning: failed to connect to Redis: %v", err)
+	}
+
 	return &CompositeStorage{
-		RedisStorage:    NewRedisStorage(addr, expiration),
+		RedisStorage:    redis,
 		InMemoryStorage: NewInMemoryStorage(size),
 	}
 }
 
 func (cs *CompositeStorage) Set(ctx context.Context, key, value string) error {
 
-	err := cs.RedisStorage.Set(ctx, key, value)
+	if cs.RedisStorage != nil {
+		err := cs.RedisStorage.Set(ctx, key, value)
 
-	if err != nil {
-		return err
+		if err != nil {
+			return err
+		}
 	}
 
-	err = cs.InMemoryStorage.Set(ctx, key, value)
+	err := cs.InMemoryStorage.Set(ctx, key, value)
 
 	if err != nil {
 		return err
@@ -47,10 +56,12 @@ func (cs *CompositeStorage) Get(ctx context.Context, key string) (string, error)
 		return val, nil
 	}
 
-	val, err = cs.RedisStorage.Get(ctx, key)
+	if cs.RedisStorage != nil {
+		val, err = cs.RedisStorage.Get(ctx, key)
 
-	if err != nil && err != redis.Nil {
-		return "", err
+		if err != nil && err != redis.Nil {
+			return "", err
+		}
 	}
 
 	return val, nil
