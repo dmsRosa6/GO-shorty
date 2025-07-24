@@ -40,3 +40,20 @@ Shortens a given URL.
 ```bash
 curl -X POST -d "url=https://example.com" http://localhost:8080/shorten
 ```
+
+#### `GET /{code}`
+
+Resolves a code to a URL
+
+- **Request parameters:**
+  - `code`: The code that is associated with a URL
+
+- **Response:**
+  - `200 OK`: Returns the original URL
+  - `500 Internal Server Error`: If not found
+
+**Example:**
+
+```bash
+curl http://localhost:8080/12345678
+```
